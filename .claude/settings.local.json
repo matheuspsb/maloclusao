@@ -12,7 +12,8 @@
       "Bash(npm install tailwindcss @tailwindcss/vite axios zustand)",
       "Bash(npm install class-variance-authority clsx tailwind-merge lucide-react)",
       "Bash(npx tsc --noEmit)",
-      "Bash(npm run build)"
+      "Bash(npm run build)",
+      "Bash(npm install react-hook-form @hookform/resolvers yup)"
     ]
   }
 }

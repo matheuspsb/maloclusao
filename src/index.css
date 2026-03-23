@@ -1,5 +1,105 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
+
+  /* ─── Brand: Primary (Teal) ─── */
+  --color-primary-50: oklch(0.97 0.014 195);
+  --color-primary-100: oklch(0.94 0.028 195);
+  --color-primary-200: oklch(0.88 0.056 195);
+  --color-primary-300: oklch(0.78 0.09 195);
+  --color-primary-400: oklch(0.68 0.12 195);
+  --color-primary-500: oklch(0.58 0.13 195);
+  --color-primary-600: oklch(0.50 0.12 195);
+  --color-primary-700: oklch(0.42 0.10 195);
+  --color-primary-800: oklch(0.35 0.08 195);
+  --color-primary-900: oklch(0.28 0.06 195);
+  --color-primary-950: oklch(0.20 0.04 195);
+
+  /* ─── Brand: Accent (Amber) ─── */
+  --color-accent-50: oklch(0.98 0.016 85);
+  --color-accent-100: oklch(0.95 0.038 85);
+  --color-accent-200: oklch(0.90 0.076 85);
+  --color-accent-300: oklch(0.84 0.12 85);
+  --color-accent-400: oklch(0.78 0.154 85);
+  --color-accent-500: oklch(0.75 0.16 85);
+  --color-accent-600: oklch(0.65 0.16 60);
+  --color-accent-700: oklch(0.55 0.14 55);
+  --color-accent-800: oklch(0.45 0.11 55);
+  --color-accent-900: oklch(0.38 0.08 55);
+
+  /* ─── Semantic: status ─── */
+  --color-success-50: oklch(0.97 0.018 155);
+  --color-success-500: oklch(0.60 0.14 155);
+  --color-success-700: oklch(0.42 0.10 155);
+
+  --color-warning-50: oklch(0.98 0.020 85);
+  --color-warning-500: oklch(0.78 0.16 70);
+  --color-warning-700: oklch(0.55 0.14 55);
+
+  --color-danger-50: oklch(0.97 0.015 25);
+  --color-danger-500: oklch(0.60 0.18 25);
+  --color-danger-700: oklch(0.45 0.15 25);
+
+  /* ─── Semantic: surfaces (theme-aware via CSS vars) ─── */
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-card: var(--card);
+  --color-card-fg: var(--card-text);
+  --color-muted: var(--muted);
+  --color-muted-fg: var(--muted-text);
+  --color-surface-border: var(--edge);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sb);
+  --color-sidebar-fg: var(--sb-text);
+  --color-sidebar-border: var(--sb-edge);
+  --color-sidebar-active: var(--sb-active);
+}
+
+/* ─── Light ─── */
+:root {
+  --bg: oklch(0.985 0.002 240);
+  --fg: oklch(0.20 0.02 260);
+  --card: oklch(1.0 0 0);
+  --card-text: oklch(0.20 0.02 260);
+  --muted: oklch(0.955 0.008 240);
+  --muted-text: oklch(0.50 0.015 260);
+  --edge: oklch(0.90 0.010 240);
+  --input: oklch(0.90 0.010 240);
+  --ring: oklch(0.68 0.12 195);
+  --sb: oklch(0.975 0.005 240);
+  --sb-text: oklch(0.35 0.02 260);
+  --sb-edge: oklch(0.92 0.008 240);
+  --sb-active: oklch(0.97 0.014 195);
+}
+
+/* ─── Dark ─── */
+.dark {
+  --bg: oklch(0.16 0.014 260);
+  --fg: oklch(0.93 0.008 240);
+  --card: oklch(0.19 0.016 260);
+  --card-text: oklch(0.93 0.008 240);
+  --muted: oklch(0.22 0.018 260);
+  --muted-text: oklch(0.62 0.015 240);
+  --edge: oklch(0.28 0.020 260);
+  --input: oklch(0.28 0.020 260);
+  --ring: oklch(0.58 0.13 195);
+  --sb: oklch(0.14 0.012 260);
+  --sb-text: oklch(0.80 0.010 240);
+  --sb-edge: oklch(0.24 0.016 260);
+  --sb-active: oklch(0.24 0.030 195);
+}
+
+/* ─── Base ─── */
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  border-color: var(--edge);
 }
