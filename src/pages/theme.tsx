@@ -14,14 +14,14 @@ const accentSwatches = [
 
 export default function ThemePage() {
   return (
-    <div className="flex flex-col items-center gap-8 p-8">
+    <div className="mx-auto flex w-full max-w-2xl flex-col items-center gap-6 px-4 py-6 sm:gap-8 sm:px-6 sm:py-8">
       <div className="flex flex-col items-center gap-4">
-        <h1 className="text-3xl font-bold text-foreground">Tema</h1>
+        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Tema</h1>
         <ThemeToggle />
       </div>
 
-      <div className="grid w-full max-w-2xl gap-4">
-        <div className="rounded-xl bg-card p-6 shadow-sm">
+      <div className="grid w-full gap-4">
+        <div className="rounded-xl bg-card p-4 shadow-sm sm:p-6">
           <h2 className="mb-4 text-lg font-semibold text-card-fg">
             Paleta de cores
           </h2>
@@ -29,18 +29,18 @@ export default function ThemePage() {
           <div className="space-y-3">
             <div>
               <p className="mb-1.5 text-sm text-muted-fg">Primary (Teal)</p>
-              <div className="flex gap-1">
+              <div className="grid grid-cols-6 gap-1 sm:grid-cols-11">
                 {primarySwatches.map((cls) => (
-                  <div key={cls} className={`h-8 flex-1 rounded-md ${cls}`} />
+                  <div key={cls} className={`h-8 rounded-md ${cls}`} />
                 ))}
               </div>
             </div>
 
             <div>
               <p className="mb-1.5 text-sm text-muted-fg">Accent (Amber)</p>
-              <div className="flex gap-1">
+              <div className="grid grid-cols-5 gap-1 sm:grid-cols-10">
                 {accentSwatches.map((cls) => (
-                  <div key={cls} className={`h-8 flex-1 rounded-md ${cls}`} />
+                  <div key={cls} className={`h-8 rounded-md ${cls}`} />
                 ))}
               </div>
             </div>
@@ -65,14 +65,14 @@ export default function ThemePage() {
           </div>
         </div>
 
-        <div className="rounded-xl bg-card p-6 shadow-sm">
+        <div className="rounded-xl bg-card p-4 shadow-sm sm:p-6">
           <h2 className="mb-2 text-lg font-semibold text-card-fg">
             Exemplo de card
           </h2>
           <p className="mb-4 text-sm text-muted-fg">
             Preview de como os elementos vão ficar no sistema.
           </p>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-700">
               Primário
             </button>

@@ -29,8 +29,6 @@ import {
 import { mockPatients } from "@/mocks/patients"
 import type { MalocclusionClass, StabilometryLevel } from "@/types/patient"
 
-// ─── Derived data ───
-
 const totalPatients = mockPatients.length
 const withMalocclusion = mockPatients.filter((p) => p.malocclusion !== "Nenhuma").length
 const severeCount = mockPatients.filter((p) => p.stabilometryLevel === "Severo").length
@@ -38,8 +36,6 @@ const recentWeek = mockPatients.filter((p) => {
   const diff = Date.now() - new Date(p.createdAt).getTime()
   return diff <= 7 * 24 * 60 * 60 * 1000
 }).length
-
-// ─── Malocclusion chart ───
 
 const malocclusionCounts = mockPatients.reduce(
   (acc, p) => {
@@ -57,8 +53,6 @@ const malocclusionData = Object.entries(malocclusionCounts).map(([name, count]) 
 const malocclusionConfig: ChartConfig = {
   count: { label: "Pacientes", color: "var(--color-primary-500)" },
 }
-
-// ─── Stabilometry chart ───
 
 const stabilometryCounts = mockPatients.reduce(
   (acc, p) => {
