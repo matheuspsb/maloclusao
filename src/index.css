@@ -28,7 +28,7 @@
   --color-accent-800: oklch(0.45 0.11 55);
   --color-accent-900: oklch(0.38 0.08 55);
 
-  /* ─── Semantic: status ─── */
+  /* ─── Status ─── */
   --color-success-50: oklch(0.97 0.018 155);
   --color-success-500: oklch(0.60 0.14 155);
   --color-success-700: oklch(0.42 0.10 155);
@@ -41,18 +41,39 @@
   --color-danger-500: oklch(0.60 0.18 25);
   --color-danger-700: oklch(0.45 0.15 25);
 
-  /* ─── Semantic: surfaces (theme-aware via CSS vars) ─── */
+  /* ─── Semantic surfaces (theme-aware) ─── */
   --color-background: var(--bg);
   --color-foreground: var(--fg);
+
   --color-card: var(--card);
   --color-card-fg: var(--card-text);
+  --color-card-foreground: var(--card-text);
+
   --color-muted: var(--muted);
   --color-muted-fg: var(--muted-text);
+  --color-muted-foreground: var(--muted-text);
+
+  --color-popover: var(--card);
+  --color-popover-foreground: var(--card-text);
+
+  --color-secondary: var(--muted);
+  --color-secondary-foreground: var(--fg);
+
+  --color-accent-foreground: var(--fg);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: oklch(1.0 0 0);
+
+  --color-destructive: var(--destructive);
+
+  --color-border: var(--edge);
   --color-surface-border: var(--edge);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
   --color-sidebar: var(--sb);
   --color-sidebar-fg: var(--sb-text);
+  --color-sidebar-foreground: var(--sb-text);
   --color-sidebar-border: var(--sb-edge);
   --color-sidebar-active: var(--sb-active);
 }
@@ -68,6 +89,8 @@
   --edge: oklch(0.90 0.010 240);
   --input: oklch(0.90 0.010 240);
   --ring: oklch(0.68 0.12 195);
+  --primary: oklch(0.50 0.12 195);
+  --destructive: oklch(0.55 0.18 25);
   --sb: oklch(0.975 0.005 240);
   --sb-text: oklch(0.35 0.02 260);
   --sb-edge: oklch(0.92 0.008 240);
@@ -85,6 +108,8 @@
   --edge: oklch(0.28 0.020 260);
   --input: oklch(0.28 0.020 260);
   --ring: oklch(0.58 0.13 195);
+  --primary: oklch(0.58 0.13 195);
+  --destructive: oklch(0.60 0.18 25);
   --sb: oklch(0.14 0.012 260);
   --sb-text: oklch(0.80 0.010 240);
   --sb-edge: oklch(0.24 0.016 260);
