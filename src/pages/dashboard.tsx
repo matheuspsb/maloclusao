@@ -103,7 +103,6 @@ const recentPatients = [...mockPatients]
 export default function DashboardPage() {
   return (
     <div className="space-y-6 p-6">
-      {/* Header */}
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
@@ -174,9 +173,14 @@ export default function DashboardPage() {
             <CardDescription>Distribuição por tipo (Angle)</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={malocclusionConfig} className="h-64 w-full">
+            <ChartContainer config={malocclusionConfig} className="aspect-4/3 w-full sm:aspect-video">
               <BarChart data={malocclusionData} accessibilityLayer>
-                <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                <XAxis
+                  dataKey="name"
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fontSize: 12 }}
+                />
                 <YAxis allowDecimals={false} tickLine={false} axisLine={false} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="count" radius={[6, 6, 0, 0]} fill="var(--color-primary-500)" />
@@ -191,7 +195,7 @@ export default function DashboardPage() {
             <CardDescription>Distribuição por grau de desvio</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={stabilometryConfig} className="h-64 w-full">
+            <ChartContainer config={stabilometryConfig} className="aspect-square w-full sm:aspect-video">
               <PieChart accessibilityLayer>
                 <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
                 <Pie
@@ -200,17 +204,17 @@ export default function DashboardPage() {
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
-                  outerRadius={90}
+                  innerRadius="35%"
+                  outerRadius="65%"
                   strokeWidth={2}
                 />
               </PieChart>
             </ChartContainer>
-            <div className="mt-2 flex justify-center gap-4">
+            <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1">
               {stabilometryData.map((entry) => (
                 <div key={entry.name} className="flex items-center gap-1.5 text-xs">
                   <div
-                    className="h-2.5 w-2.5 rounded-full"
+                    className="h-2.5 w-2.5 shrink-0 rounded-full"
                     style={{ backgroundColor: entry.fill }}
                   />
                   <span className="text-muted-foreground">
