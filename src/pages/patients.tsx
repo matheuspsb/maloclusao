@@ -35,7 +35,7 @@ import { Card, CardContent } from "@/components/ui/card"
 
 import { PatientFormDialog } from "@/components/patient-form-dialog"
 import { PatientDetailSheet } from "@/components/patient-detail-sheet"
-import { SortIndicator } from "@/components/sort-indicator"
+import { SortIndicator } from "@/components/shared/sort-indicator"
 
 const stabilometryBadge: Record<StabilometryLevel, string> = {
   Normal: "bg-success-50 text-success-700",
