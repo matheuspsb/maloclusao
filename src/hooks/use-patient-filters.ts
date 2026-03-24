@@ -2,12 +2,10 @@ import { useSearchParams } from "react-router"
 import { useCallback, useMemo } from "react"
 import type { SortKey, SortDir } from "@/types/sortkey.types"
 import type { MalocclusionClass, StabilometryLevel } from "@/types/patient"
+import { MALOCCLUSION_VALUES, STABILOMETRY_VALUES, GENDER_VALUES } from "@/constants/patient"
 
 const SORT_KEYS: SortKey[] = ["name", "age", "createdAt", "stabilometry"]
 const SORT_DIRS: SortDir[] = ["asc", "desc"]
-const MALOCCLUSION_VALUES: MalocclusionClass[] = ["Nenhuma", "Classe I", "Classe II", "Classe III"]
-const STABILOMETRY_VALUES: StabilometryLevel[] = ["Normal", "Leve", "Moderado", "Severo"]
-const GENDER_VALUES = ["M", "F"] as const
 
 function isValidSort(v: string | null): v is SortKey {
   return SORT_KEYS.includes(v as SortKey)

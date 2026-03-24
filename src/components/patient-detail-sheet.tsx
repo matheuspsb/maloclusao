@@ -1,4 +1,5 @@
-import type { Patient, StabilometryLevel } from "@/types/patient"
+import type { Patient } from "@/types/patient"
+import { STABILOMETRY_BADGE } from "@/constants/patient"
 import {
   Sheet,
   SheetContent,
@@ -16,12 +17,6 @@ interface Props {
   onOpenChange: (open: boolean) => void
 }
 
-const stabilometryBadge: Record<StabilometryLevel, string> = {
-  Normal: "bg-success-50 text-success-700",
-  Leve: "bg-accent-100 text-accent-800",
-  Moderado: "bg-warning-50 text-warning-700",
-  Severo: "bg-danger-50 text-danger-700",
-}
 
 export function PatientDetailSheet({ patient, open, onOpenChange }: Props) {
   if (!patient) return null
@@ -89,7 +84,7 @@ export function PatientDetailSheet({ patient, open, onOpenChange }: Props) {
               <div className="space-y-1">
                 <p className="text-xs font-medium text-muted-foreground">Grau</p>
                 <span
-                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${stabilometryBadge[patient.stabilometryLevel]}`}
+                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STABILOMETRY_BADGE[patient.stabilometryLevel]}`}
                 >
                   {patient.stabilometryLevel}
                 </span>

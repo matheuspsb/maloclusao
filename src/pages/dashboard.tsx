@@ -28,6 +28,7 @@ import {
 
 import { mockPatients } from "@/mocks/patients"
 import type { MalocclusionClass, StabilometryLevel } from "@/types/patient"
+import { STABILOMETRY_BADGE, STABILOMETRY_COLORS, STABILOMETRY_VALUES } from "@/constants/patient"
 
 const totalPatients = mockPatients.length
 const withMalocclusion = mockPatients.filter((p) => p.malocclusion !== "Nenhuma").length
@@ -62,36 +63,20 @@ const stabilometryCounts = mockPatients.reduce(
   {} as Record<StabilometryLevel, number>
 )
 
-const stabilometryColors: Record<StabilometryLevel, string> = {
-  Normal: "var(--color-success-500)",
-  Leve: "var(--color-accent-400)",
-  Moderado: "var(--color-warning-500)",
-  Severo: "var(--color-danger-500)",
-}
-
-const stabilometryData = (["Normal", "Leve", "Moderado", "Severo"] as StabilometryLevel[]).map(
+const stabilometryData = STABILOMETRY_VALUES.map(
   (level) => ({
     name: level,
     value: stabilometryCounts[level] || 0,
-    fill: stabilometryColors[level],
+    fill: STABILOMETRY_COLORS[level],
   })
 )
 
 const stabilometryConfig: ChartConfig = {
   value: { label: "Pacientes" },
-  Normal: { label: "Normal", color: stabilometryColors.Normal },
-  Leve: { label: "Leve", color: stabilometryColors.Leve },
-  Moderado: { label: "Moderado", color: stabilometryColors.Moderado },
-  Severo: { label: "Severo", color: stabilometryColors.Severo },
-}
-
-// ─── Helpers ───
-
-const stabilometryBadgeVariant: Record<StabilometryLevel, string> = {
-  Normal: "bg-success-50 text-success-700",
-  Leve: "bg-accent-100 text-accent-800",
-  Moderado: "bg-warning-50 text-warning-700",
-  Severo: "bg-danger-50 text-danger-700",
+  Normal: { label: "Normal", color: STABILOMETRY_COLORS.Normal },
+  Leve: { label: "Leve", color: STABILOMETRY_COLORS.Leve },
+  Moderado: { label: "Moderado", color: STABILOMETRY_COLORS.Moderado },
+  Severo: { label: "Severo", color: STABILOMETRY_COLORS.Severo },
 }
 
 const recentPatients = [...mockPatients]
@@ -262,7 +247,7 @@ export default function DashboardPage() {
                   </TableCell>
                   <TableCell>
                     <span
-                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${stabilometryBadgeVariant[patient.stabilometryLevel]}`}
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STABILOMETRY_BADGE[patient.stabilometryLevel]}`}
                     >
                       {patient.stabilometryLevel} ({patient.stabilometry}°)
                     </span>

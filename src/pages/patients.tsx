@@ -5,6 +5,7 @@ import { usePatientStore } from "@/store/patient-store"
 import { usePatientFilters } from "@/hooks/use-patient-filters"
 import { useDebouncedInput } from "@/hooks/use-debounced-input"
 import type { Patient, MalocclusionClass, StabilometryLevel } from "@/types/patient"
+import { STABILOMETRY_BADGE } from "@/constants/patient"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -37,12 +38,6 @@ import { PatientFormDialog } from "@/components/patient-form-dialog"
 import { PatientDetailSheet } from "@/components/patient-detail-sheet"
 import { SortIndicator } from "@/components/shared/sort-indicator"
 
-const stabilometryBadge: Record<StabilometryLevel, string> = {
-  Normal: "bg-success-50 text-success-700",
-  Leve: "bg-accent-100 text-accent-800",
-  Moderado: "bg-warning-50 text-warning-700",
-  Severo: "bg-danger-50 text-danger-700",
-}
 
 const ALL = "__all__"
 
@@ -310,7 +305,7 @@ export default function PatientsPage() {
                     </TableCell>
                     <TableCell>
                       <span
-                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${stabilometryBadge[patient.stabilometryLevel]}`}
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STABILOMETRY_BADGE[patient.stabilometryLevel]}`}
                       >
                         {patient.stabilometryLevel}
                       </span>
