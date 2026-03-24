@@ -35,7 +35,7 @@ export const mockPatients: Patient[] = [
     stabilometry: 18.7,
     stabilometryLevel: "Severo",
     createdAt: "2026-03-20",
-    evaluatedBy: "Est. Juliana",
+    evaluatedBy: "Est. Letícia",
   },
   {
     id: "4",
@@ -59,7 +59,7 @@ export const mockPatients: Patient[] = [
     stabilometry: 9.8,
     stabilometryLevel: "Moderado",
     createdAt: "2026-03-18",
-    evaluatedBy: "Est. Juliana",
+    evaluatedBy: "Est. Letícia",
   },
   {
     id: "6",
@@ -107,7 +107,7 @@ export const mockPatients: Patient[] = [
     stabilometry: 1.8,
     stabilometryLevel: "Normal",
     createdAt: "2026-03-14",
-    evaluatedBy: "Est. Juliana",
+    evaluatedBy: "Est. Letícia",
   },
   {
     id: "10",

@@ -98,8 +98,6 @@ const recentPatients = [...mockPatients]
   .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   .slice(0, 5)
 
-// ─── Component ───
-
 export default function DashboardPage() {
   return (
     <div className="space-y-6 p-6">
