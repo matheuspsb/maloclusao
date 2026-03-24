@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import AnimatedSection from "./shared/animated-section"
+import Field from "./shared/field"
 
 interface Props {
   patient: Patient | null
@@ -19,32 +21,6 @@ const stabilometryBadge: Record<StabilometryLevel, string> = {
   Leve: "bg-accent-100 text-accent-800",
   Moderado: "bg-warning-50 text-warning-700",
   Severo: "bg-danger-50 text-danger-700",
-}
-
-function Field({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="space-y-1">
-      <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <p className="text-sm text-foreground">{value}</p>
-    </div>
-  )
-}
-
-function AnimatedSection({
-  children,
-  delay,
-}: {
-  children: React.ReactNode
-  delay: number
-}) {
-  return (
-    <div
-      className="animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
-      style={{ animationDelay: `${delay}ms`, animationDuration: "350ms" }}
-    >
-      {children}
-    </div>
-  )
 }
 
 export function PatientDetailSheet({ patient, open, onOpenChange }: Props) {
