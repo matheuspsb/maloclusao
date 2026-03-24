@@ -1,7 +1,7 @@
 import { RouterProvider } from "react-router"
 import { useEffect } from "react"
 import { useThemeStore, applyTheme } from "@/hooks/use-theme"
-import { router } from "@/router"
+import { router } from "@/router/router"
 
 export default function App() {
   const theme = useThemeStore((s) => s.theme)

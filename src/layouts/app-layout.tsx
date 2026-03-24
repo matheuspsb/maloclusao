@@ -1,14 +1,10 @@
 import { Outlet, NavLink, Navigate, useLocation } from "react-router"
 import { useEffect } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { LayoutDashboard, Users, LogOut, Menu, X } from "lucide-react"
+import { LogOut, Menu, X } from "lucide-react"
 import { useAuthStore } from "@/store/auth-store"
 import { useSidebarStore } from "@/store/sidebar-store"
-
-const navItems = [
-  { to: "/app", icon: LayoutDashboard, label: "Dashboard", end: true },
-  { to: "/app/pacientes", icon: Users, label: "Pacientes" },
-]
+import { navigationItems } from "@/router/navigation-items"
 
 export default function AppLayout() {
   const { user, logout } = useAuthStore()
@@ -25,7 +21,6 @@ export default function AppLayout() {
 
   return (
     <div className="flex min-h-screen bg-background">
-      {/* Overlay (mobile) */}
       {open && (
         <div
           className="fixed inset-0 z-30 bg-black/50 lg:hidden"
@@ -33,7 +28,6 @@ export default function AppLayout() {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-sidebar-border bg-sidebar transition-transform duration-200 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
@@ -52,7 +46,7 @@ export default function AppLayout() {
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-          {navItems.map(({ to, icon: Icon, label, end }) => (
+          {navigationItems.map(({ to, icon: Icon, label, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -83,9 +77,7 @@ export default function AppLayout() {
         </div>
       </aside>
 
-      {/* Main */}
       <div className="flex flex-1 flex-col overflow-auto">
-        {/* Top bar (mobile only) */}
         <header className="flex items-center gap-3 border-b border-sidebar-border px-4 py-3 lg:hidden">
           <button
             onClick={toggle}

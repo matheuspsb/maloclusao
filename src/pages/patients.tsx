@@ -132,7 +132,6 @@ export default function PatientsPage() {
 
   return (
     <div className="space-y-4 p-4 sm:p-6">
-      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Pacientes</h1>
