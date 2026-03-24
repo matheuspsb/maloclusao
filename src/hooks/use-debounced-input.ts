@@ -1,9 +1,5 @@
 import { useState, useRef, useCallback } from "react"
 
-/**
- * Local input state + debounced callback.
- * The input value updates instantly; the callback fires after `delay` ms of inactivity.
- */
 export function useDebouncedInput(
   initialValue: string,
   onDebounced: (value: string) => void,
