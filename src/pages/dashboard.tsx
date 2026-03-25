@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Link } from "react-router"
 import { Users, AlertTriangle, Activity, UserPlus } from "lucide-react"
 import { Bar, BarChart, XAxis, YAxis, Pie, PieChart } from "recharts"
@@ -29,6 +30,7 @@ import {
 import { mockPatients } from "@/mocks/patients"
 import type { MalocclusionClass, StabilometryLevel } from "@/types/patient"
 import { STABILOMETRY_BADGE, STABILOMETRY_COLORS, STABILOMETRY_VALUES } from "@/constants/patient"
+import { PatientFormDialog } from "@/components/patient-form-dialog"
 
 const totalPatients = mockPatients.length
 const withMalocclusion = mockPatients.filter((p) => p.malocclusion !== "Nenhuma").length
@@ -84,6 +86,8 @@ const recentPatients = [...mockPatients]
   .slice(0, 5)
 
 export default function DashboardPage() {
+  const [formOpen, setFormOpen] = useState(false)
+
   return (
     <div className="space-y-6 p-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
@@ -93,7 +97,7 @@ export default function DashboardPage() {
             Visão geral dos pacientes e avaliações
           </p>
         </div>
-        <Button>
+        <Button onClick={() => setFormOpen(true)}>
           <UserPlus size={16} />
           Novo paciente
         </Button>
@@ -262,6 +266,7 @@ export default function DashboardPage() {
           </Table>
         </CardContent>
       </Card>
+      <PatientFormDialog open={formOpen} onOpenChange={setFormOpen} />
     </div>
   )
 }
