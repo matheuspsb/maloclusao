@@ -7,7 +7,7 @@ import { useSidebarStore } from "@/store/sidebar-store"
 import { navigationItems } from "@/router/navigation-items"
 
 export default function AppLayout() {
-  const { user, logout } = useAuthStore()
+  const { logout, isAuthenticated } = useAuthStore()
   const { open, toggle, close } = useSidebarStore()
   const location = useLocation()
 
@@ -15,7 +15,7 @@ export default function AppLayout() {
     close()
   }, [location.pathname, close])
 
-  if (!user) {
+  if (!isAuthenticated()) {
     return <Navigate to="/login" replace />
   }
 

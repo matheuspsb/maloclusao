@@ -1,25 +1,34 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-
-interface User {
-  id: string
-  name: string
-  email: string
-  role: "professor" | "student"
-}
-
-interface AuthState {
-  user: User | null
-  login: (user: User) => void
-  logout: () => void
-}
+import type { AuthState } from "@/types/auth"
+import { generateToken, SESSION_DURATION_MS } from "@/lib/token"
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
-      login: (user) => set({ user }),
-      logout: () => set({ user: null }),
+      session: null,
+
+      login: (user) =>
+        set({
+          user,
+          session: {
+            token: generateToken(),
+            expiresAt: Date.now() + SESSION_DURATION_MS,
+          },
+        }),
+
+      logout: () => set({ user: null, session: null }),
+
+      isAuthenticated: () => {
+        const { user, session } = get()
+        if (!user || !session) return false
+        if (Date.now() > session.expiresAt) {
+          set({ user: null, session: null })
+          return false
+        }
+        return true
+      },
     }),
     { name: "maloclusao-auth" }
   )
