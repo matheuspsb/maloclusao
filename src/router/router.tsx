@@ -5,7 +5,6 @@ import AppLayout from "@/layouts/app-layout"
 
 import HomePage from "@/pages/home"
 import LoginPage from "@/pages/login"
-import ThemePage from "@/pages/theme"
 import DashboardPage from "@/pages/dashboard"
 import PatientsPage from "@/pages/patients"
 import NotFoundPage from "@/pages/not-found"
@@ -16,7 +15,6 @@ export const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/login", element: <LoginPage /> },
-      { path: "/theme", element: <ThemePage /> },
     ],
   },
   {

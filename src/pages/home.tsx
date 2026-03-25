@@ -11,15 +11,9 @@ export default function HomePage() {
       <div className="flex gap-3">
         <Link
           to="/login"
-          className="rounded-lg bg-primary-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-700"
+          className="rounded-lg bg-primary-600 px-18 py-2.5 text-base font-medium text-white text-center transition-colors hover:bg-primary-700"
         >
           Entrar
-        </Link>
-        <Link
-          to="/theme"
-          className="rounded-lg border border-surface-border bg-card px-6 py-2.5 text-sm font-medium text-card-fg transition-colors hover:bg-muted"
-        >
-          Tema
         </Link>
       </div>
     </div>
