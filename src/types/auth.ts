@@ -5,15 +5,9 @@ export interface User {
   role: "professor" | "student"
 }
 
-export interface Session {
-  token: string
-  expiresAt: number
-}
-
 export interface AuthState {
   user: User | null
-  session: Session | null
-  login: (user: User, token: string) => void
+  login: (user: User) => void
   logout: () => void
   isAuthenticated: () => boolean
 }

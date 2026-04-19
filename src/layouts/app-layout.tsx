@@ -1,13 +1,21 @@
-import { Outlet, NavLink, Navigate, useLocation } from "react-router"
+import { Outlet, NavLink, Navigate, useLocation, useNavigate } from "react-router"
 import { useEffect } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LogOut, Menu, X } from "lucide-react"
 import { useAuthStore } from "@/store/auth-store"
 import { useSidebarStore } from "@/store/sidebar-store"
 import { navigationItems } from "@/router/navigation-items"
+import { authLogout } from "@/services/auth.service"
 
 export default function AppLayout() {
   const { logout, isAuthenticated } = useAuthStore()
+  const navigate = useNavigate()
+
+  async function handleLogout() {
+    await authLogout().catch(() => {})
+    logout()
+    navigate("/login")
+  }
   const { open, toggle, close } = useSidebarStore()
   const location = useLocation()
 
@@ -68,7 +76,7 @@ export default function AppLayout() {
         <div className="space-y-3 border-t border-sidebar-border p-3">
           <ThemeToggle />
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-fg transition-colors hover:bg-sidebar-active"
           >
             <LogOut size={18} />

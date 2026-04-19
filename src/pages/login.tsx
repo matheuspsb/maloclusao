@@ -23,7 +23,7 @@ export default function LoginPage() {
     setAuthError("")
     try {
       const result = await authLogin(data.email, data.password)
-      login(result.user, result.token)
+      login(result.user)
       navigate("/app")
     } catch {
       setAuthError("Email ou senha inválidos")

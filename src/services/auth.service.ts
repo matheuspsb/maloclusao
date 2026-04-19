@@ -9,7 +9,6 @@ interface RegisterPayload {
 }
 
 interface LoginResult {
-  token: string
   user: User
 }
 
@@ -30,14 +29,17 @@ export async function authRegister(payload: RegisterPayload): Promise<User> {
   return { id: raw.id, name: raw.name, email: raw.email, role: mapRole(raw.role) }
 }
 
+export async function authLogout(): Promise<void> {
+  await api.post("/auth/logout")
+}
+
 export async function authLogin(email: string, password: string): Promise<LoginResult> {
-  const { data } = await api.post<{ data: { token: string; user: RawUser } }>("/auth/login", {
+  const { data } = await api.post<{ data: { user: RawUser } }>("/auth/login", {
     email,
     password,
   })
   const raw = data.data
   return {
-    token: raw.token,
     user: { id: raw.user.id, name: raw.user.name, email: raw.user.email, role: mapRole(raw.user.role) },
   }
 }
