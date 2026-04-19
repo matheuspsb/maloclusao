@@ -3,15 +3,14 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { patientSchema, type PatientForm } from "@/schemas/patient-schema"
 import { usePatientStore } from "@/store/patient-store"
-import { useAuthStore } from "@/store/auth-store"
 import type { Patient } from "@/types/patient"
 
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -24,25 +23,34 @@ import {
 } from "@/components/ui/select"
 
 interface Props {
+  patient: Patient | null
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function PatientFormDialog({ open, onOpenChange }: Props) {
-  const addPatient = usePatientStore((s) => s.addPatient)
-  const user = useAuthStore((s) => s.user)
+export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
+  const updatePatient = usePatientStore((s) => s.updatePatient)
 
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<string[]>(patient?.images ?? [])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
     register,
     handleSubmit,
     setValue,
-    reset,
     formState: { errors },
   } = useForm<PatientForm>({
     resolver: yupResolver(patientSchema),
+    defaultValues: {
+      name: patient?.name ?? "",
+      age: patient?.age ?? 0,
+      gender: patient?.gender ?? "M",
+      guardian: patient?.guardian ?? "",
+      malocclusion: patient?.malocclusion ?? "Nenhuma",
+      stabilometry: patient?.stabilometry ?? 0,
+      stabilometryLevel: patient?.stabilometryLevel ?? "Normal",
+      images: patient?.images ?? [],
+    },
   })
 
   function handleFiles(files: FileList | null) {
@@ -62,29 +70,22 @@ export function PatientFormDialog({ open, onOpenChange }: Props) {
   }
 
   function onSubmit(data: PatientForm) {
-    addPatient(
-      { ...(data as Omit<Patient, "id" | "createdAt" | "evaluatedBy">), images },
-      user?.name ? `Prof. ${user.name}` : "Desconhecido"
-    )
-    reset()
-    setImages([])
-    onOpenChange(false)
-  }
-
-  function handleCancel() {
-    reset()
-    setImages([])
+    if (!patient) return
+    updatePatient(patient.id, {
+      ...(data as Omit<Patient, "id" | "createdAt" | "evaluatedBy">),
+      images,
+    })
     onOpenChange(false)
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Novo paciente</DialogTitle>
-        </DialogHeader>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="overflow-y-auto sm:max-w-lg">
+        <SheetHeader>
+          <SheetTitle>Editar paciente</SheetTitle>
+        </SheetHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
           <div className="space-y-2">
             <Label>Nome da criança</Label>
             <Input placeholder="Nome completo" {...register("name")} />
@@ -96,18 +97,17 @@ export function PatientFormDialog({ open, onOpenChange }: Props) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Idade</Label>
-              <Input
-                type="number"
-                placeholder="Ex: 8"
-                {...register("age")}
-              />
+              <Input type="number" placeholder="Ex: 8" {...register("age")} />
               {errors.age && (
                 <p className="text-xs text-danger-500">{errors.age.message}</p>
               )}
             </div>
             <div className="space-y-2">
               <Label>Sexo</Label>
-              <Select onValueChange={(v) => setValue("gender", v as "M" | "F", { shouldValidate: true })}>
+              <Select
+                defaultValue={patient?.gender}
+                onValueChange={(v) => setValue("gender", v as "M" | "F", { shouldValidate: true })}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
@@ -132,7 +132,12 @@ export function PatientFormDialog({ open, onOpenChange }: Props) {
 
           <div className="space-y-2">
             <Label>Classificação de maloclusão</Label>
-            <Select onValueChange={(v) => setValue("malocclusion", v as PatientForm["malocclusion"], { shouldValidate: true })}>
+            <Select
+              defaultValue={patient?.malocclusion}
+              onValueChange={(v) =>
+                setValue("malocclusion", v as PatientForm["malocclusion"], { shouldValidate: true })
+              }
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione a classe" />
               </SelectTrigger>
@@ -151,19 +156,21 @@ export function PatientFormDialog({ open, onOpenChange }: Props) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Desvio (°)</Label>
-              <Input
-                type="number"
-                step="0.1"
-                placeholder="Ex: 12.4"
-                {...register("stabilometry")}
-              />
+              <Input type="number" step="0.1" placeholder="Ex: 12.4" {...register("stabilometry")} />
               {errors.stabilometry && (
                 <p className="text-xs text-danger-500">{errors.stabilometry.message}</p>
               )}
             </div>
             <div className="space-y-2">
               <Label>Grau</Label>
-              <Select onValueChange={(v) => setValue("stabilometryLevel", v as PatientForm["stabilometryLevel"], { shouldValidate: true })}>
+              <Select
+                defaultValue={patient?.stabilometryLevel}
+                onValueChange={(v) =>
+                  setValue("stabilometryLevel", v as PatientForm["stabilometryLevel"], {
+                    shouldValidate: true,
+                  })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
@@ -221,17 +228,13 @@ export function PatientFormDialog({ open, onOpenChange }: Props) {
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit">Cadastrar</Button>
+            <Button type="submit">Salvar</Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   )
 }

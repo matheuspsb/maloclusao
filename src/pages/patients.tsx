@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react"
-import { Search, UserPlus, X, Eye, Trash2, SlidersHorizontal } from "lucide-react"
+import { useNavigate } from "react-router"
+import { Search, UserPlus, X, Eye, Trash2, SlidersHorizontal, Pencil } from "lucide-react"
 
 import { usePatientStore } from "@/store/patient-store"
 import { usePatientFilters } from "@/hooks/use-patient-filters"
@@ -35,13 +36,14 @@ import {
 import { Card, CardContent } from "@/components/ui/card"
 
 import { PatientFormDialog } from "@/components/patient-form-dialog"
-import { PatientDetailSheet } from "@/components/patient-detail-sheet"
+import { PatientEditSheet } from "@/components/patient-edit-sheet"
 import { SortIndicator } from "@/components/shared/sort-indicator"
 
 
 const ALL = "__all__"
 
 export default function PatientsPage() {
+  const navigate = useNavigate()
   const { patients, removePatient } = usePatientStore()
 
   const {
@@ -63,8 +65,7 @@ export default function PatientsPage() {
   const searchInput = useDebouncedInput(search, setSearch)
 
   const [formOpen, setFormOpen] = useState(false)
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
-  const [detailOpen, setDetailOpen] = useState(false)
+  const [editTarget, setEditTarget] = useState<Patient | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Patient | null>(null)
   const [filtersOpen, setFiltersOpen] = useState(false)
 
@@ -112,11 +113,6 @@ export default function PatientsPage() {
 
     return result
   }, [patients, search, filterMalocclusion, filterStabilometry, filterGender, sortKey, sortDir])
-
-  function openDetail(patient: Patient) {
-    setSelectedPatient(patient)
-    setDetailOpen(true)
-  }
 
   function confirmDelete() {
     if (deleteTarget) {
@@ -274,7 +270,7 @@ export default function PatientsPage() {
                 >
                   Data <SortIndicator column="createdAt" sortKey={sortKey} sortDir={sortDir} />
                 </TableHead>
-                <TableHead className="w-20" />
+                <TableHead className="w-28" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -289,7 +285,7 @@ export default function PatientsPage() {
                   <TableRow
                     key={patient.id}
                     className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => openDetail(patient)}
+                    onClick={() => navigate(`/app/pacientes/${patient.id}`)}
                   >
                     <TableCell className="font-medium">{patient.name}</TableCell>
                     <TableCell>{patient.age}</TableCell>
@@ -319,11 +315,18 @@ export default function PatientsPage() {
                     <TableCell>
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                         <button
-                          onClick={() => openDetail(patient)}
+                          onClick={() => navigate(`/app/pacientes/${patient.id}`)}
                           className="cursor-pointer rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
                           title="Ver detalhes"
                         >
                           <Eye size={15} />
+                        </button>
+                        <button
+                          onClick={() => setEditTarget(patient)}
+                          className="cursor-pointer rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                          title="Editar"
+                        >
+                          <Pencil size={15} />
                         </button>
                         <button
                           onClick={() => setDeleteTarget(patient)}
@@ -345,11 +348,12 @@ export default function PatientsPage() {
       {/* New patient dialog */}
       <PatientFormDialog open={formOpen} onOpenChange={setFormOpen} />
 
-      {/* Detail sheet */}
-      <PatientDetailSheet
-        patient={selectedPatient}
-        open={detailOpen}
-        onOpenChange={setDetailOpen}
+      {/* Edit sheet */}
+      <PatientEditSheet
+        key={editTarget?.id}
+        patient={editTarget}
+        open={!!editTarget}
+        onOpenChange={(o) => { if (!o) setEditTarget(null) }}
       />
 
       {/* Delete confirmation */}

@@ -13,4 +13,5 @@ export interface Patient {
   stabilometryLevel: StabilometryLevel
   createdAt: string
   evaluatedBy: string
+  images: string[]
 }

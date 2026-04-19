@@ -12,6 +12,7 @@ export const mockPatients: Patient[] = [
     stabilometryLevel: "Moderado",
     createdAt: "2026-03-22",
     evaluatedBy: "Prof. Matheus",
+    images: [],
   },
   {
     id: "2",
@@ -24,6 +25,7 @@ export const mockPatients: Patient[] = [
     stabilometryLevel: "Leve",
     createdAt: "2026-03-21",
     evaluatedBy: "Prof. Matheus",
+    images: [],
   },
   {
     id: "3",
@@ -36,6 +38,7 @@ export const mockPatients: Patient[] = [
     stabilometryLevel: "Severo",
     createdAt: "2026-03-20",
     evaluatedBy: "Est. Letícia",
+    images: [],
   },
   {
     id: "4",
@@ -48,6 +51,7 @@ export const mockPatients: Patient[] = [
     stabilometryLevel: "Normal",
     createdAt: "2026-03-19",
     evaluatedBy: "Prof. Matheus",
+    images: [],
   },
   {
     id: "5",
@@ -60,6 +64,7 @@ export const mockPatients: Patient[] = [
     stabilometryLevel: "Moderado",
     createdAt: "2026-03-18",
     evaluatedBy: "Est. Letícia",
+    images: [],
   },
   {
     id: "6",
@@ -72,6 +77,7 @@ export const mockPatients: Patient[] = [
     stabilometryLevel: "Normal",
     createdAt: "2026-03-17",
     evaluatedBy: "Prof. Matheus",
+    images: [],
   },
   {
     id: "7",
@@ -84,6 +90,7 @@ export const mockPatients: Patient[] = [
     stabilometryLevel: "Severo",
     createdAt: "2026-03-16",
     evaluatedBy: "Est. Rafael",
+    images: [],
   },
   {
     id: "8",
@@ -96,6 +103,7 @@ export const mockPatients: Patient[] = [
     stabilometryLevel: "Leve",
     createdAt: "2026-03-15",
     evaluatedBy: "Prof. Matheus",
+    images: [],
   },
   {
     id: "9",
@@ -108,6 +116,7 @@ export const mockPatients: Patient[] = [
     stabilometryLevel: "Normal",
     createdAt: "2026-03-14",
     evaluatedBy: "Est. Letícia",
+    images: [],
   },
   {
     id: "10",
@@ -120,5 +129,6 @@ export const mockPatients: Patient[] = [
     stabilometryLevel: "Severo",
     createdAt: "2026-03-13",
     evaluatedBy: "Prof. Matheus",
+    images: [],
   },
 ]

@@ -26,6 +26,7 @@ export const patientSchema = yup.object({
     .string()
     .oneOf(["Normal", "Leve", "Moderado", "Severo"], "Selecione o grau")
     .required("Grau é obrigatório"),
+  images: yup.array().of(yup.string().required()).optional().default([]),
 })
 
 export type PatientForm = yup.InferType<typeof patientSchema>

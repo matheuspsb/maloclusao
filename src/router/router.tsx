@@ -7,6 +7,7 @@ import HomePage from "@/pages/home"
 import LoginPage from "@/pages/login"
 import DashboardPage from "@/pages/dashboard"
 import PatientsPage from "@/pages/patients"
+import PatientDetailPage from "@/pages/patient-detail"
 import NotFoundPage from "@/pages/not-found"
 
 export const router = createBrowserRouter([
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <DashboardPage /> },
       { path: "pacientes", element: <PatientsPage /> },
+      { path: "pacientes/:id", element: <PatientDetailPage /> },
     ],
   },
   {
