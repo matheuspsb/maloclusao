@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import type { AuthState } from "@/types/auth"
-import { generateToken, SESSION_DURATION_MS } from "@/lib/token"
+import { SESSION_DURATION_MS } from "@/lib/token"
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -9,11 +9,11 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       session: null,
 
-      login: (user) =>
+      login: (user, token) =>
         set({
           user,
           session: {
-            token: generateToken(),
+            token,
             expiresAt: Date.now() + SESSION_DURATION_MS,
           },
         }),

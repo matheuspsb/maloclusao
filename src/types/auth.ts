@@ -13,7 +13,7 @@ export interface Session {
 export interface AuthState {
   user: User | null
   session: Session | null
-  login: (user: User) => void
+  login: (user: User, token: string) => void
   logout: () => void
   isAuthenticated: () => boolean
 }

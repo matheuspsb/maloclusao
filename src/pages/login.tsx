@@ -4,17 +4,7 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useAuthStore } from "@/store/auth-store"
 import { loginSchema, type LoginForm } from "@/schemas/login-schema"
-
-const MOCK_USER = {
-  email: "matheusslg1@gmail.com",
-  password: "admin",
-  data: {
-    id: "1",
-    name: "Matheus",
-    email: "matheusslg1@gmail.com",
-    role: "professor" as const,
-  },
-}
+import { authLogin } from "@/services/auth.service"
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -29,13 +19,13 @@ export default function LoginPage() {
     resolver: yupResolver(loginSchema),
   })
 
-  function onSubmit(data: LoginForm) {
+  async function onSubmit(data: LoginForm) {
     setAuthError("")
-
-    if (data.email === MOCK_USER.email && data.password === MOCK_USER.password) {
-      login(MOCK_USER.data)
+    try {
+      const result = await authLogin(data.email, data.password)
+      login(result.user, result.token)
       navigate("/app")
-    } else {
+    } catch {
       setAuthError("Email ou senha inválidos")
     }
   }
