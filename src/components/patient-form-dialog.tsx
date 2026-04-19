@@ -3,8 +3,7 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { patientSchema, type PatientForm } from "@/schemas/patient-schema"
 import { usePatientStore } from "@/store/patient-store"
-import { useAuthStore } from "@/store/auth-store"
-import type { Patient } from "@/types/patient"
+import { createPatient } from "@/services/patient.service"
 
 import {
   Dialog,
@@ -29,10 +28,10 @@ interface Props {
 }
 
 export function PatientFormDialog({ open, onOpenChange }: Props) {
-  const addPatient = usePatientStore((s) => s.addPatient)
-  const user = useAuthStore((s) => s.user)
+  const insertPatient = usePatientStore((s) => s.insertPatient)
 
   const [images, setImages] = useState<string[]>([])
+  const [submitError, setSubmitError] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
@@ -40,7 +39,7 @@ export function PatientFormDialog({ open, onOpenChange }: Props) {
     handleSubmit,
     setValue,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<PatientForm>({
     resolver: yupResolver(patientSchema),
   })
@@ -61,19 +60,23 @@ export function PatientFormDialog({ open, onOpenChange }: Props) {
     setImages((prev) => prev.filter((_, i) => i !== index))
   }
 
-  function onSubmit(data: PatientForm) {
-    addPatient(
-      { ...(data as Omit<Patient, "id" | "createdAt" | "evaluatedBy">), images },
-      user?.name ? `Prof. ${user.name}` : "Desconhecido"
-    )
-    reset()
-    setImages([])
-    onOpenChange(false)
+  async function onSubmit(data: PatientForm) {
+    setSubmitError("")
+    try {
+      const patient = await createPatient({ ...data, images: [] })
+      insertPatient(patient)
+      reset()
+      setImages([])
+      onOpenChange(false)
+    } catch {
+      setSubmitError("Erro ao cadastrar paciente. Tente novamente.")
+    }
   }
 
   function handleCancel() {
     reset()
     setImages([])
+    setSubmitError("")
     onOpenChange(false)
   }
 
@@ -220,15 +223,22 @@ export function PatientFormDialog({ open, onOpenChange }: Props) {
             )}
           </div>
 
+          {submitError && (
+            <p className="text-xs text-danger-500">{submitError}</p>
+          )}
+
           <div className="flex justify-end gap-3 pt-2">
             <Button
               type="button"
               variant="outline"
               onClick={handleCancel}
+              disabled={isSubmitting}
             >
               Cancelar
             </Button>
-            <Button type="submit">Cadastrar</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Cadastrando..." : "Cadastrar"}
+            </Button>
           </div>
         </form>
       </DialogContent>

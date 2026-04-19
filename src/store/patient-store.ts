@@ -4,6 +4,7 @@ import { mockPatients } from "@/mocks/patients"
 
 interface PatientState {
   patients: Patient[]
+  insertPatient: (patient: Patient) => void
   addPatient: (patient: Omit<Patient, "id" | "createdAt" | "evaluatedBy">, evaluatedBy: string) => void
   updatePatient: (id: string, data: Omit<Patient, "id" | "createdAt" | "evaluatedBy">) => void
   removePatient: (id: string) => void
@@ -11,6 +12,8 @@ interface PatientState {
 
 export const usePatientStore = create<PatientState>((set) => ({
   patients: mockPatients,
+  insertPatient: (patient) =>
+    set((state) => ({ patients: [patient, ...state.patients] })),
   addPatient: (data, evaluatedBy) =>
     set((state) => ({
       patients: [
