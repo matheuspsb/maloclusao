@@ -29,6 +29,12 @@ export async function authRegister(payload: RegisterPayload): Promise<User> {
   return { id: raw.id, name: raw.name, email: raw.email, role: mapRole(raw.role) }
 }
 
+export async function authMe(): Promise<User> {
+  const { data } = await api.get<{ data: RawUser }>("/auth/me")
+  const raw = data.data
+  return { id: raw.id, name: raw.name, email: raw.email, role: mapRole(raw.role) }
+}
+
 export async function authLogout(): Promise<void> {
   await api.post("/auth/logout")
 }

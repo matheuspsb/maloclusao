@@ -2,6 +2,7 @@ import { RouterProvider } from "react-router"
 import { useEffect } from "react"
 import { useThemeStore, applyTheme } from "@/hooks/use-theme"
 import { router } from "@/router/router"
+import { AuthProvider } from "@/components/auth-provider"
 
 export default function App() {
   const theme = useThemeStore((s) => s.theme)
@@ -17,5 +18,9 @@ export default function App() {
     }
   }, [theme])
 
-  return <RouterProvider router={router} />
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  )
 }
