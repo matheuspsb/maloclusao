@@ -2,7 +2,7 @@ import type { Patient } from "@/types/patient"
 import type { SortKey, SortDir } from "@/types/sortkey.types"
 import { Card, CardContent } from "@/components/ui/card"
 import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { PatientTableBody } from "@/components/patients/patient-table-body"
+import { PatientTableBody } from "@/components/patients/table/patient-table-body"
 import { SortIndicator } from "@/components/shared/sort-indicator"
 
 interface PatientTableProps {

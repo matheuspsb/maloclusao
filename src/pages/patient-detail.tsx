@@ -12,8 +12,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Card, CardContent } from "@/components/ui/card"
-import { PatientImageLightbox } from "@/components/patients/patient-image-lightbox"
-import { PatientEditSheet } from "@/components/patients/patient-edit-sheet"
+import { PatientImageLightbox } from "@/components/patients/dialogs/patient-image-lightbox"
+import { PatientEditSheet } from "@/components/patients/dialogs/patient-edit-sheet"
 import Field from "@/components/shared/field"
 
 export default function PatientDetailPage() {

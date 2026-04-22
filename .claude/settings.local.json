@@ -17,7 +17,8 @@
       "WebSearch",
       "WebFetch(domain:dev.to)",
       "Bash(yarn add *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(git mv *)"
     ]
   }
 }

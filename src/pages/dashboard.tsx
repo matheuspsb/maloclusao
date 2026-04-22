@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 
 import { usePatients } from "@/hooks/use-patients"
 import { useDashboardStats } from "@/hooks/use-dashboard-stats"
-import { PatientFormDialog } from "@/components/patients/patient-form-dialog"
+import { PatientFormDialog } from "@/components/patients/dialogs/patient-form-dialog"
 import { StatsCards } from "@/components/dashboard/stats-cards"
 import { MalocclusionChart } from "@/components/dashboard/malocclusion-chart"
 import { StabilometryChart } from "@/components/dashboard/stabilometry-chart"

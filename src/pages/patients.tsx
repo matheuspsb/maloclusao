@@ -9,12 +9,12 @@ import type { Patient } from "@/types/patient"
 
 import { Button } from "@/components/ui/button"
 
-import { PatientFormDialog } from "@/components/patients/patient-form-dialog"
-import { PatientEditSheet } from "@/components/patients/patient-edit-sheet"
-import { PatientDeleteDialog } from "@/components/patients/patient-delete-dialog"
-import { PatientSearchBar } from "@/components/patients/patient-search-bar"
-import { PatientFilterBar } from "@/components/patients/patient-filter-bar"
-import { PatientTable } from "@/components/patients/patient-table"
+import { PatientFormDialog } from "@/components/patients/dialogs/patient-form-dialog"
+import { PatientEditSheet } from "@/components/patients/dialogs/patient-edit-sheet"
+import { PatientDeleteDialog } from "@/components/patients/dialogs/patient-delete-dialog"
+import { PatientSearchBar } from "@/components/patients/filters/patient-search-bar"
+import { PatientFilterBar } from "@/components/patients/filters/patient-filter-bar"
+import { PatientTable } from "@/components/patients/table/patient-table"
 
 export default function PatientsPage() {
   const { data: patients = [], isLoading, isError } = usePatients()
