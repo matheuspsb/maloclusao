@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { patientSchema, type PatientForm } from "@/schemas/patient-schema"
 import { usePatientStore } from "@/store/patient-store"
+import { updatePatient as updatePatientApi } from "@/services/patient.service"
+import { uploadImage } from "@/services/upload.service"
 import type { Patient } from "@/types/patient"
 
 import {
@@ -29,9 +31,12 @@ interface Props {
 }
 
 export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
-  const updatePatient = usePatientStore((s) => s.updatePatient)
+  const updatePatientStore = usePatientStore((s) => s.updatePatient)
 
-  const [images, setImages] = useState<string[]>(patient?.images ?? [])
+  const [existingUrls, setExistingUrls] = useState<string[]>(patient?.images ?? [])
+  const [newFiles, setNewFiles] = useState<{ file: File; preview: string }[]>([])
+  const [submitError, setSubmitError] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
@@ -58,24 +63,39 @@ export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
     Array.from(files).forEach((file) => {
       const reader = new FileReader()
       reader.onload = (e) => {
-        const result = e.target?.result as string
-        setImages((prev) => [...prev, result])
+        const preview = e.target?.result as string
+        setNewFiles((prev) => [...prev, { file, preview }])
       }
       reader.readAsDataURL(file)
     })
   }
 
   function removeImage(index: number) {
-    setImages((prev) => prev.filter((_, i) => i !== index))
+    if (index < existingUrls.length) {
+      setExistingUrls((prev) => prev.filter((_, i) => i !== index))
+    } else {
+      setNewFiles((prev) => prev.filter((_, i) => i !== index - existingUrls.length))
+    }
   }
 
-  function onSubmit(data: PatientForm) {
+  async function onSubmit(data: PatientForm) {
     if (!patient) return
-    updatePatient(patient.id, {
-      ...(data as Omit<Patient, "id" | "createdAt" | "evaluatedBy">),
-      images,
-    })
-    onOpenChange(false)
+    setSubmitError("")
+    setIsSubmitting(true)
+    try {
+      const uploadedUrls = await Promise.all(newFiles.map(({ file }) => uploadImage(file)))
+      const allImages = [...existingUrls, ...uploadedUrls]
+      const updated = await updatePatientApi(patient.id, {
+        ...(data as Omit<Patient, "id" | "createdAt" | "evaluatedBy">),
+        images: allImages,
+      })
+      updatePatientStore(patient.id, updated)
+      onOpenChange(false)
+    } catch {
+      setSubmitError("Erro ao salvar paciente. Tente novamente.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -205,10 +225,10 @@ export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
             >
               Adicionar imagens
             </Button>
-            {images.length > 0 && (
+            {(existingUrls.length > 0 || newFiles.length > 0) && (
               <div className="grid grid-cols-4 gap-2 pt-1">
-                {images.map((src, i) => (
-                  <div key={i} className="relative">
+                {existingUrls.map((src, i) => (
+                  <div key={`existing-${i}`} className="relative">
                     <img
                       src={src}
                       alt={`Imagem ${i + 1}`}
@@ -223,15 +243,37 @@ export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
                     </button>
                   </div>
                 ))}
+                {newFiles.map(({ preview }, i) => (
+                  <div key={`new-${i}`} className="relative">
+                    <img
+                      src={preview}
+                      alt={`Nova imagem ${i + 1}`}
+                      className="h-20 w-full rounded-md object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(existingUrls.length + i)}
+                      className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-danger-500 text-white text-xs leading-none hover:bg-danger-600"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
 
+          {submitError && (
+            <p className="text-xs text-danger-500">{submitError}</p>
+          )}
+
           <div className="flex justify-end gap-3 pt-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
               Cancelar
             </Button>
-            <Button type="submit">Salvar</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Salvando..." : "Salvar"}
+            </Button>
           </div>
         </form>
       </SheetContent>

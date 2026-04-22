@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import { patientSchema, type PatientForm } from "@/schemas/patient-schema"
 import { usePatientStore } from "@/store/patient-store"
 import { createPatient } from "@/services/patient.service"
+import { uploadImage } from "@/services/upload.service"
 
 import {
   Dialog,
@@ -30,7 +31,7 @@ interface Props {
 export function PatientFormDialog({ open, onOpenChange }: Props) {
   const insertPatient = usePatientStore((s) => s.insertPatient)
 
-  const [images, setImages] = useState<string[]>([])
+  const [imageFiles, setImageFiles] = useState<{ file: File; preview: string }[]>([])
   const [submitError, setSubmitError] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -49,24 +50,25 @@ export function PatientFormDialog({ open, onOpenChange }: Props) {
     Array.from(files).forEach((file) => {
       const reader = new FileReader()
       reader.onload = (e) => {
-        const result = e.target?.result as string
-        setImages((prev) => [...prev, result])
+        const preview = e.target?.result as string
+        setImageFiles((prev) => [...prev, { file, preview }])
       }
       reader.readAsDataURL(file)
     })
   }
 
   function removeImage(index: number) {
-    setImages((prev) => prev.filter((_, i) => i !== index))
+    setImageFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
   async function onSubmit(data: PatientForm) {
     setSubmitError("")
     try {
-      const patient = await createPatient({ ...data, images: [] })
+      const images = await Promise.all(imageFiles.map(({ file }) => uploadImage(file)))
+      const patient = await createPatient({ ...data, images })
       insertPatient(patient)
       reset()
-      setImages([])
+      setImageFiles([])
       onOpenChange(false)
     } catch {
       setSubmitError("Erro ao cadastrar paciente. Tente novamente.")
@@ -75,7 +77,7 @@ export function PatientFormDialog({ open, onOpenChange }: Props) {
 
   function handleCancel() {
     reset()
-    setImages([])
+    setImageFiles([])
     setSubmitError("")
     onOpenChange(false)
   }
@@ -201,12 +203,12 @@ export function PatientFormDialog({ open, onOpenChange }: Props) {
             >
               Adicionar imagens
             </Button>
-            {images.length > 0 && (
+            {imageFiles.length > 0 && (
               <div className="grid grid-cols-4 gap-2 pt-1">
-                {images.map((src, i) => (
+                {imageFiles.map(({ preview }, i) => (
                   <div key={i} className="relative">
                     <img
-                      src={src}
+                      src={preview}
                       alt={`Imagem ${i + 1}`}
                       className="h-20 w-full rounded-md object-cover"
                     />
