@@ -1,18 +1,18 @@
 import { useRef, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useMutation } from "@tanstack/react-query"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { patientSchema, type PatientForm } from "@/schemas/patient-schema"
-import { usePatientStore } from "@/store/patient-store"
-import { updatePatient as updatePatientApi } from "@/services/patient.service"
+import { queryClient } from "@/lib/query-client"
+import { createPatient } from "@/services/patient.service"
 import { uploadImage } from "@/services/upload.service"
-import type { Patient } from "@/types/patient"
 
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -25,36 +25,34 @@ import {
 } from "@/components/ui/select"
 
 interface Props {
-  patient: Patient | null
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
-  const updatePatientStore = usePatientStore((s) => s.updatePatient)
-
-  const [existingUrls, setExistingUrls] = useState<string[]>(patient?.images ?? [])
-  const [newFiles, setNewFiles] = useState<{ file: File; preview: string }[]>([])
-  const [submitError, setSubmitError] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+export function PatientFormDialog({ open, onOpenChange }: Props) {
+  const [imageFiles, setImageFiles] = useState<{ file: File; preview: string }[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<PatientForm>({
     resolver: yupResolver(patientSchema),
-    defaultValues: {
-      name: patient?.name ?? "",
-      age: patient?.age ?? 0,
-      gender: patient?.gender ?? "M",
-      guardian: patient?.guardian ?? "",
-      malocclusion: patient?.malocclusion ?? "Nenhuma",
-      stabilometry: patient?.stabilometry ?? 0,
-      stabilometryLevel: patient?.stabilometryLevel ?? "Normal",
-      images: patient?.images ?? [],
+  })
+
+  const mutation = useMutation({
+    mutationFn: async (data: PatientForm) => {
+      const images = await Promise.all(imageFiles.map(({ file }) => uploadImage(file)))
+      return createPatient({ ...data, images })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patients"] })
+      reset()
+      setImageFiles([])
+      onOpenChange(false)
     },
   })
 
@@ -64,48 +62,31 @@ export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
       const reader = new FileReader()
       reader.onload = (e) => {
         const preview = e.target?.result as string
-        setNewFiles((prev) => [...prev, { file, preview }])
+        setImageFiles((prev) => [...prev, { file, preview }])
       }
       reader.readAsDataURL(file)
     })
   }
 
   function removeImage(index: number) {
-    if (index < existingUrls.length) {
-      setExistingUrls((prev) => prev.filter((_, i) => i !== index))
-    } else {
-      setNewFiles((prev) => prev.filter((_, i) => i !== index - existingUrls.length))
-    }
+    setImageFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
-  async function onSubmit(data: PatientForm) {
-    if (!patient) return
-    setSubmitError("")
-    setIsSubmitting(true)
-    try {
-      const uploadedUrls = await Promise.all(newFiles.map(({ file }) => uploadImage(file)))
-      const allImages = [...existingUrls, ...uploadedUrls]
-      const updated = await updatePatientApi(patient.id, {
-        ...(data as Omit<Patient, "id" | "createdAt" | "evaluatedBy">),
-        images: allImages,
-      })
-      updatePatientStore(patient.id, updated)
-      onOpenChange(false)
-    } catch {
-      setSubmitError("Erro ao salvar paciente. Tente novamente.")
-    } finally {
-      setIsSubmitting(false)
-    }
+  function handleCancel() {
+    reset()
+    setImageFiles([])
+    mutation.reset()
+    onOpenChange(false)
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="overflow-y-auto sm:max-w-lg">
-        <SheetHeader>
-          <SheetTitle>Editar paciente</SheetTitle>
-        </SheetHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Novo paciente</DialogTitle>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
+        <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
           <div className="space-y-2">
             <Label>Nome da criança</Label>
             <Input placeholder="Nome completo" {...register("name")} />
@@ -117,17 +98,18 @@ export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Idade</Label>
-              <Input type="number" placeholder="Ex: 8" {...register("age")} />
+              <Input
+                type="number"
+                placeholder="Ex: 8"
+                {...register("age")}
+              />
               {errors.age && (
                 <p className="text-xs text-danger-500">{errors.age.message}</p>
               )}
             </div>
             <div className="space-y-2">
               <Label>Sexo</Label>
-              <Select
-                defaultValue={patient?.gender}
-                onValueChange={(v) => setValue("gender", v as "M" | "F", { shouldValidate: true })}
-              >
+              <Select onValueChange={(v) => setValue("gender", v as "M" | "F", { shouldValidate: true })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
@@ -152,12 +134,7 @@ export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
 
           <div className="space-y-2">
             <Label>Classificação de maloclusão</Label>
-            <Select
-              defaultValue={patient?.malocclusion}
-              onValueChange={(v) =>
-                setValue("malocclusion", v as PatientForm["malocclusion"], { shouldValidate: true })
-              }
-            >
+            <Select onValueChange={(v) => setValue("malocclusion", v as PatientForm["malocclusion"], { shouldValidate: true })}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecione a classe" />
               </SelectTrigger>
@@ -176,21 +153,19 @@ export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Desvio (°)</Label>
-              <Input type="number" step="0.1" placeholder="Ex: 12.4" {...register("stabilometry")} />
+              <Input
+                type="number"
+                step="0.1"
+                placeholder="Ex: 12.4"
+                {...register("stabilometry")}
+              />
               {errors.stabilometry && (
                 <p className="text-xs text-danger-500">{errors.stabilometry.message}</p>
               )}
             </div>
             <div className="space-y-2">
               <Label>Grau</Label>
-              <Select
-                defaultValue={patient?.stabilometryLevel}
-                onValueChange={(v) =>
-                  setValue("stabilometryLevel", v as PatientForm["stabilometryLevel"], {
-                    shouldValidate: true,
-                  })
-                }
-              >
+              <Select onValueChange={(v) => setValue("stabilometryLevel", v as PatientForm["stabilometryLevel"], { shouldValidate: true })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
@@ -225,12 +200,12 @@ export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
             >
               Adicionar imagens
             </Button>
-            {(existingUrls.length > 0 || newFiles.length > 0) && (
+            {imageFiles.length > 0 && (
               <div className="grid grid-cols-4 gap-2 pt-1">
-                {existingUrls.map((src, i) => (
-                  <div key={`existing-${i}`} className="relative">
+                {imageFiles.map(({ preview }, i) => (
+                  <div key={i} className="relative">
                     <img
-                      src={src}
+                      src={preview}
                       alt={`Imagem ${i + 1}`}
                       className="h-20 w-full rounded-md object-cover"
                     />
@@ -243,40 +218,29 @@ export function PatientEditSheet({ patient, open, onOpenChange }: Props) {
                     </button>
                   </div>
                 ))}
-                {newFiles.map(({ preview }, i) => (
-                  <div key={`new-${i}`} className="relative">
-                    <img
-                      src={preview}
-                      alt={`Nova imagem ${i + 1}`}
-                      className="h-20 w-full rounded-md object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(existingUrls.length + i)}
-                      className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-danger-500 text-white text-xs leading-none hover:bg-danger-600"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
               </div>
             )}
           </div>
 
-          {submitError && (
-            <p className="text-xs text-danger-500">{submitError}</p>
+          {mutation.isError && (
+            <p className="text-xs text-danger-500">Erro ao cadastrar paciente. Tente novamente.</p>
           )}
 
           <div className="flex justify-end gap-3 pt-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              disabled={mutation.isPending}
+            >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando..." : "Salvar"}
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending ? "Cadastrando..." : "Cadastrar"}
             </Button>
           </div>
         </form>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   )
 }

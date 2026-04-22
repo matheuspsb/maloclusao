@@ -1,28 +1,46 @@
 import { useState } from "react"
 import { useParams, useNavigate, Navigate } from "react-router"
-import { ArrowLeft, Pencil } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { ArrowLeft, Pencil, Loader2 } from "lucide-react"
 
-import { usePatientStore } from "@/store/patient-store"
+import { queryClient } from "@/lib/query-client"
+import { getPatientById } from "@/services/patient.service"
 import { STABILOMETRY_BADGE } from "@/constants/patient"
+import type { Patient } from "@/types/patient"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Card, CardContent } from "@/components/ui/card"
-import { PatientImageLightbox } from "@/components/patient-image-lightbox"
-import { PatientEditSheet } from "@/components/patient-edit-sheet"
+import { PatientImageLightbox } from "@/components/patients/patient-image-lightbox"
+import { PatientEditSheet } from "@/components/patients/patient-edit-sheet"
 import Field from "@/components/shared/field"
 
 export default function PatientDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const patient = usePatientStore((s) => s.patients.find((p) => p.id === id))
+
+  const { data: patient, isLoading, isError } = useQuery({
+    queryKey: ["patient", id],
+    queryFn: () => getPatientById(id!),
+    enabled: !!id,
+    initialData: () => {
+      const cached = queryClient.getQueryData<Patient[]>(["patients"])
+      return cached?.find((p) => p.id === id)
+    },
+  })
 
   const [editOpen, setEditOpen] = useState(false)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
 
-  if (!patient) return <Navigate to="/app/pacientes" replace />
+  if (isLoading) return (
+    <div className="flex items-center justify-center py-24 text-muted-foreground">
+      <Loader2 size={24} className="animate-spin" />
+    </div>
+  )
+
+  if (isError || !patient) return <Navigate to="/app/pacientes" replace />
 
   function openLightbox(index: number) {
     setLightboxIndex(index)
@@ -32,7 +50,6 @@ export default function PatientDetailPage() {
   return (
     <>
       <div className="space-y-6 p-4 sm:p-6">
-        {/* Header */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Button
@@ -53,7 +70,6 @@ export default function PatientDetailPage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          {/* Dados pessoais */}
           <Card>
             <CardContent className="space-y-4 pt-6">
               <h2 className="text-sm font-semibold text-foreground">Dados pessoais</h2>
@@ -71,7 +87,6 @@ export default function PatientDetailPage() {
             </CardContent>
           </Card>
 
-          {/* Avaliação clínica */}
           <Card>
             <CardContent className="space-y-4 pt-6">
               <h2 className="text-sm font-semibold text-foreground">Maloclusão</h2>
@@ -102,7 +117,6 @@ export default function PatientDetailPage() {
           </Card>
         </div>
 
-        {/* Imagens */}
         <Card>
           <CardContent className="pt-6">
             <h2 className="mb-4 text-sm font-semibold text-foreground">Imagens</h2>
