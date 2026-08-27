@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
+import { VisuallyHidden } from "radix-ui"
 import { Loader2, ScanLine, Save, RotateCcw, AlertTriangle } from "lucide-react"
 
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { PostureAnalysisCanvas } from "@/components/patients/posture/posture-analysis-canvas"
 import { usePostureAnalyses, useCreatePostureAnalysis } from "@/hooks/use-posture-analysis"
@@ -76,6 +77,11 @@ export function PatientImageLightbox({ patientId, images, initialIndex, open, on
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl border-0 bg-black/90 p-0 [&>button]:text-white">
+        <VisuallyHidden.Root>
+          <DialogTitle>
+            Imagem {current + 1} de {images.length}
+          </DialogTitle>
+        </VisuallyHidden.Root>
         <div className="relative flex h-[80vh] flex-col items-center justify-center gap-4 p-6">
           <span className="absolute left-4 top-4 text-sm text-white/70">
             {current + 1} / {images.length}
