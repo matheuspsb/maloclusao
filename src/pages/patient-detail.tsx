@@ -134,7 +134,7 @@ export default function PatientDetailPage() {
                     <img
                       src={src}
                       alt={`Imagem ${i + 1}`}
-                      className="h-52 w-full object-cover transition-opacity hover:opacity-80"
+                      className="h-52 w-full object-cover transition-opacity hover:opacity-80 cursor-pointer"
                     />
                   </button>
                 ))}
@@ -146,6 +146,7 @@ export default function PatientDetailPage() {
 
       <PatientImageLightbox
         key={lightboxIndex}
+        patientId={patient.id}
         images={patient.images}
         initialIndex={lightboxIndex}
         open={lightboxOpen}
