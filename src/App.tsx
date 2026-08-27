@@ -1,10 +1,11 @@
 import { RouterProvider } from "react-router"
 import { useEffect } from "react"
-import { QueryClientProvider } from "@tanstack/react-query"
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
 import { useThemeStore, applyTheme } from "@/hooks/use-theme"
 import { router } from "@/router/router"
 import { AuthProvider } from "@/components/auth-provider"
 import { queryClient } from "@/lib/query-client"
+import { queryPersister } from "@/lib/query-persister"
 
 export default function App() {
   const theme = useThemeStore((s) => s.theme)
@@ -21,10 +22,10 @@ export default function App() {
   }, [theme])
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister: queryPersister }}>
       <AuthProvider>
         <RouterProvider router={router} />
       </AuthProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   )
 }

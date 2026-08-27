@@ -6,6 +6,7 @@ export function usePatients() {
   return useQuery({
     queryKey: ["patients"],
     queryFn: () => listPatients({ limit: 1000 }).then((response) => response.data),
+    refetchOnMount: "always",
   })
 }
 
