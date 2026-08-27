@@ -27,7 +27,7 @@ export default function DashboardPage() {
             Visão geral dos pacientes e avaliações
           </p>
         </div>
-        <Button onClick={() => setFormOpen(true)}>
+        <Button className="cursor-pointer" onClick={() => setFormOpen(true)}>
           <UserPlus size={16} />
           Novo paciente
         </Button>

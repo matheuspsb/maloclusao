@@ -34,7 +34,7 @@ export function PatientSearchBar({ searchInput, hasActiveFilters, filtersOpen, o
         variant="outline"
         size="sm"
         onClick={onToggleFilters}
-        className={hasActiveFilters ? "border-primary-500 text-primary-600" : ""}
+        className={`cursor-pointer ${hasActiveFilters ? "border-primary-500 text-primary-600" : ""}`}
         aria-pressed={filtersOpen}
       >
         <SlidersHorizontal size={14} />

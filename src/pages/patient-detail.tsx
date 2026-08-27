@@ -56,14 +56,14 @@ export default function PatientDetailPage() {
               variant="ghost"
               size="sm"
               onClick={() => navigate("/app/pacientes")}
-              className="gap-1.5"
+              className="gap-1.5 cursor-pointer"
             >
               <ArrowLeft size={16} />
               Voltar
             </Button>
             <h1 className="text-xl font-bold text-foreground">{patient.name}</h1>
           </div>
-          <Button size="sm" onClick={() => setEditOpen(true)} className="gap-1.5">
+          <Button size="sm" onClick={() => setEditOpen(true)} className="gap-1.5 cursor-pointer">
             <Pencil size={15} />
             Editar
           </Button>

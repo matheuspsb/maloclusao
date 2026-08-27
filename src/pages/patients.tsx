@@ -52,7 +52,7 @@ export default function PatientsPage() {
             {filtered.length} de {patients.length} paciente{patients.length !== 1 && "s"}
           </p>
         </div>
-        <Button onClick={() => setFormOpen(true)}>
+        <Button className="cursor-pointer" onClick={() => setFormOpen(true)}>
           <UserPlus size={16} />
           Novo paciente
         </Button>
