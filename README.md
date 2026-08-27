@@ -1,73 +1,27 @@
-# React + TypeScript + Vite
+## Análise Postural (Simetrógrafo)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O sistema inclui uma versão digital do **simetrógrafo** — instrumento tradicional de avaliação postural, formado por um quadro com linhas horizontais e verticais, usado para identificar assimetrias corporais comparando pontos anatômicos do paciente contra essas referências. A ideia do projeto é correlacionar esses desvios posturais com o tipo de maloclusão registrado em cada paciente.
 
-Currently, two official plugins are available:
+### Como funciona
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Ao clicar em **"Analisar Simetrógrafo"** sobre uma foto do paciente, três etapas acontecem em sequência:
 
-## React Compiler
+1. **Detecção de pose (IA)** — a imagem é processada pelo [MediaPipe Pose Landmarker](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker), um modelo de rede neural pré-treinado (BlazePose, do Google) especializado em estimar 33 pontos-chave do corpo humano a partir de uma única foto. A inferência roda **inteiramente no navegador** via WebAssembly: o modelo é baixado uma vez de um CDN e a foto nunca é enviada a nenhum servidor para essa etapa — é a única parte do fluxo que de fato usa IA.
+2. **Cálculo das métricas (matemática, não IA)** — a partir dos pontos detectados (nariz, ombros e quadril), calculamos por trigonometria simples (`atan2`) a inclinação de ombros e de quadril, além do desvio lateral de cada um em relação a um eixo vertical de referência (alinhado ao nariz, como no simetrógrafo físico tradicional). Essa etapa é código determinístico comum, sem nenhum modelo de IA envolvido.
+3. **Overlay do grid** — as linhas horizontais/verticais e os pontos-chave são desenhados sobre a foto em um `<canvas>`, reproduzindo visualmente o quadro do simetrógrafo tradicional.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Onde está o código
 
-## Expanding the ESLint configuration
+| Camada                                      | Arquivo                                                       |
+| ------------------------------------------- | ------------------------------------------------------------- |
+| Carregamento do modelo de IA                | `src/lib/pose-landmarker.ts`                                  |
+| Orquestração da análise                     | `src/lib/analyze-posture.ts`                                  |
+| Cálculo das métricas                        | `src/lib/posture-metrics.ts`                                  |
+| Desenho do grid                             | `src/components/patients/posture/posture-analysis-canvas.tsx` |
+| Integração na UI (botão, resultado, salvar) | `src/components/patients/dialogs/patient-image-lightbox.tsx`  |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Persistência
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Ao salvar uma análise, os pontos detectados e as métricas calculadas são enviados ao backend (`POST /patients/:id/posture-analyses`) e ficam armazenados vinculados ao paciente e à imagem — preparando o terreno para, futuramente, cruzar esse histórico postural com o dado de maloclusão de cada paciente.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
